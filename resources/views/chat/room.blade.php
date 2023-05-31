@@ -6,7 +6,6 @@
 
     <div class="chat">
         <div class="chat-header clearfix">
-            //s kogo si pishesh
             <div class="row">
                 <div class="col-lg-6">
                     <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
@@ -17,35 +16,9 @@
                         <small>Last seen: 2 hours ago</small>
                     </div>
                 </div>
-{{--                <div class="col-lg-6 hidden-sm text-right">--}}
-{{--                    <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>--}}
-{{--                    <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>--}}
-{{--                    <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>--}}
-{{--                    <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>--}}
-{{--                </div>--}}
             </div>
         </div>
         <div class="chat-history" id="messages">
-            //left
-            <ul class="m-b-0">
-                <li class="clearfix">
-                    <div class="message-data text-right">
-                        <span class="message-data-time">10:10 AM, Today</span>
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                    </div>
-                    <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-                </li>
-            </ul>
-            //right
-            <ul class="m-b-0">
-                <li class="clearfix">
-                    <div class="message-data text-left">
-                        <span class="message-data-time">10:10 AM, Today</span>
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                    </div>
-                    <div class="message other-message float-left"> Hi Aiden, how are you? How is the project coming along? </div>
-                </li>
-            </ul>
         </div>
 
         <form id="chat-form">
@@ -58,18 +31,6 @@
         </form>
     </div>
 
-{{--    <title>Pusher Test</title>--}}
-{{--    <meta name="csrf-token" content="{{ csrf_token() }}">--}}
-{{--    <h1>Messages</h1>--}}
-{{--    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />--}}
-
-{{--    <div class="chat-container">--}}
-{{--        <div id="messages"></div>--}}
-{{--        <form id="chat-form">--}}
-{{--            <input type="text" id="message-input" placeholder="Type a message">--}}
-{{--            <button type="submit">Send</button>--}}
-{{--        </form>--}}
-{{--    </div>--}}
 
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -92,11 +53,29 @@
 
         window.Echo.private('chat.{{$roomId}}')
         .listen('.message', (data) => {
-            const chatMessagesElement = document.getElementById('messages');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('chat-message');
-            messageElement.innerText = `${data.sender.name}: ${data.message}`;
-            chatMessagesElement.appendChild(messageElement);
+         const chatMessagesElement = document.getElementById('messages');
+
+         const listItemElement = document.createElement('li');
+         listItemElement.classList.add('clearfix');
+
+            if(data.sender.id === {{ auth()->user()->id }}){
+               listItemElement.innerHTML = `
+                    <div class="message-data">
+                        <span class="message-data-time">10:10 AM, Today</span>
+                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
+                    </div>
+                    <div class="message my-message">${data.sender.name}: ${data.message}</div>
+                `;
+            }else{
+             listItemElement.innerHTML = `
+                <div class="message-data text-right">
+                    <span class="message-data-time">10:10 AM, Today</span>
+                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="avatar">
+                </div>
+                <div class="message other-message float-right">${data.sender.name}: ${data.message}</div>
+                `;
+            }
+        chatMessagesElement.appendChild(listItemElement);
         });
 
         const chatForm = document.getElementById('chat-form');

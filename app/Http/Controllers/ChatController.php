@@ -28,6 +28,7 @@ class ChatController extends Controller
      */
     public function index(): View
     {
+        //get teh users
         $users = User::query()
             ->where('id', '<>', auth()->user()->id)
             ->get();
@@ -56,10 +57,11 @@ class ChatController extends Controller
 
     public function createRoom(Request $request): \Illuminate\View\View
     {
+        //fix the rooms
         try {
             $userOne = (int)$request->get('userOne');
             $userTwo = (int)$request->get('userTwo');
-
+            //if the room exists load the messages beacuse now its hardcoded
             $room = Room::updateOrCreate(
                 ['user_1_id' => $userOne, 'user_2_id' => $userTwo],
                 ['user_1_id' => $userOne, 'user_2_id' => $userTwo],
@@ -69,6 +71,6 @@ class ChatController extends Controller
             return view('home');
         }
 
-        return view('chat.room', ['roomId' => $room->id]);
+        return view('chat.room', ['roomId' => 4]);//$room->id]);
     }
 }
