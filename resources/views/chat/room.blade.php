@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Pusher Test</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-<body>
+@extends('layouts.app')
+
+@section('content')
+<title>Pusher Test</title>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <h1>Messages</h1>
 
 <div class="chat-container">
@@ -27,7 +25,7 @@
         // Enable pusher logging - don't include this in production
         Pusher.logToConsole = true;
 
-        var pusher = new Pusher('', {
+        var pusher = new Pusher('783d5f7b732bb56c3cf8', {
             cluster: 'eu',
             authEndpoint: 'http://chat-app.localhost/broadcasting/auth',
             auth: {
@@ -86,5 +84,5 @@
 });
 
 </script>
-</body>
-</html>
+@endsection
+
