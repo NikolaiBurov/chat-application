@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Models\User;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -28,14 +27,9 @@ class SendMessageEvent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        //make channel private
         return [
-            new Channel('chat-channel')
+            new PrivateChannel('chat.' . $this->roomId)
         ];
-
-//        return [
-//            new PrivateChannel('private-chat.' . $this->roomId)
-//        ];
     }
 
     public function broadcastAs(): string

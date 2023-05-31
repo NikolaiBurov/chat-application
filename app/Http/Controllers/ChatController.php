@@ -39,17 +39,13 @@ class ChatController extends Controller
     {
         /** @var User $loggerInUser */
         $loggerInUser = auth()->user();
-        $senderId = $request->get('sender');
         $receiverId = $request->get('receiver');
-
-        if ($senderId !== $loggerInUser->id) {
-            return response()->json(['status' => 'error', 'message' => 'user is not the same']);
-        }
 
         try {
             $receiver = User::findOrFail($receiverId);
             $message = $request->get('message');
             $roomId = $request->get('roomId');
+
             event(new SendMessageEvent($loggerInUser, $receiver, $message, $roomId));
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -66,9 +62,9 @@ class ChatController extends Controller
 
             $room = Room::updateOrCreate(
                 ['user_1_id' => $userOne, 'user_2_id' => $userTwo],
-                ['user_1_id' => $userOne, 'user_2_id' => $userTwo]
+                ['user_1_id' => $userOne, 'user_2_id' => $userTwo],
+                ['user_1_id' => $userTwo, 'user_2_id' => $userOne],
             );
-
         } catch (\Exception $e) {
             return view('home');
         }

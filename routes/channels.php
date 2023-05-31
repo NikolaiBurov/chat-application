@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Room;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -17,18 +18,7 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int)$user->id === (int)$id;
 });
-//
 
-Broadcast::channel('chat-channel', function (User $user) {
-    return true;
-});
-
-Broadcast::channel('private-chat.{roomId}', function (User $sender, User $receiver, string $message, int $roomId) {
-//    dd($sender, $receiver, $message, $roomId);
-//    return [
-//        'user_id' => $user->id,
-//        'name' => $user->name,
-//        'room_id' => $roomId,
-//    ];
-    return true;
+Broadcast::channel('chat.{roomId}', function (string $sender, string $roomId) {
+    return json_decode($sender)?->id === auth()->user()->id && Room::findOrFail((int)$roomId);
 });

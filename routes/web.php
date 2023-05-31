@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/home', [\App\Http\Controllers\ChatController::class, 'index'])->name('home');
+Route::get('/', [\App\Http\Controllers\ChatController::class, 'index'])->name('home');
 
 Route::get('/create-room', [\App\Http\Controllers\ChatController::class, 'createRoom'])->name('chat.create-room');
 
