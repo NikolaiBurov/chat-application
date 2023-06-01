@@ -4,28 +4,22 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Events\SaveMessageEvent;
 use App\Events\SendMessageEvent;
-use App\Models\Room;
 use App\Models\User;
+use App\Repositories\ChatRepository;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function __construct(private readonly ChatRepository $chatRepository)
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): View
     {
         //get teh users
@@ -47,7 +41,8 @@ class ChatController extends Controller
             $message = $request->get('message');
             $roomId = $request->get('roomId');
 
-            event(new SendMessageEvent($loggerInUser, $receiver, $message, $roomId));
+            event(new SendMessageEvent($loggerInUser, $receiver, $message, $roomId, Carbon::now()->format('h:i')));
+            event(new SaveMessageEvent($loggerInUser, $message, $roomId));
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -55,22 +50,20 @@ class ChatController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    public function createRoom(Request $request): \Illuminate\View\View
+    public function findOrCreateRoom(Request $request): \Illuminate\View\View
     {
-        //fix the rooms
         try {
             $userOne = (int)$request->get('userOne');
             $userTwo = (int)$request->get('userTwo');
-            //if the room exists load the messages beacuse now its hardcoded
-            $room = Room::updateOrCreate(
-                ['user_1_id' => $userOne, 'user_2_id' => $userTwo],
-                ['user_1_id' => $userOne, 'user_2_id' => $userTwo],
-                ['user_1_id' => $userTwo, 'user_2_id' => $userOne],
-            );
+            $room = $this->chatRepository->findRoomByUserIds($userTwo, $userOne)->first();
+
+            if (is_null($this->chatRepository->findRoomByUserIds($userTwo, $userOne))) {
+                $room = $this->chatRepository->createRoom($userOne, $userTwo);
+            }
         } catch (\Exception $e) {
             return view('home');
         }
 
-        return view('chat.room', ['roomId' => 4]);//$room->id]);
+        return view('chat.room', ['roomId' => $room->id, 'messages' => $room->messages]);
     }
 }

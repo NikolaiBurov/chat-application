@@ -19,6 +19,32 @@
             </div>
         </div>
         <div class="chat-history" id="messages">
+            <ul class="m-b-0">
+                @if(!is_null($messages))
+                    @foreach($messages as $message)
+                        @if($message->sender_id === auth()->user()->id)
+                            <li class="clearfix">
+                                <div class="message-data">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
+                                    <span
+                                        class="message-data-time">{{$message->created_at->format('h:i')}}, Today</span>
+                                </div>
+                                <div class="message my-message">{{$message->sender->name}}:{{$message->content}}</div>
+                            </li>
+                        @else
+                            <li class="clearfix">
+                                <div class="message-data text-right">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="avatar">
+                                    <span class="message-data-time">{{$message->created_at->format('h:i')}},Today</span>
+                                </div>
+                                <div class="message other-message float-right">
+                                    {{$message->sender->name}}:{{$message->content}}
+                                </div>
+                            </li>
+                        @endif
+                    @endforeach
+                @endif
+            </ul>
         </div>
 
         <form id="chat-form">
@@ -57,20 +83,19 @@
 
          const listItemElement = document.createElement('li');
          listItemElement.classList.add('clearfix');
-
             if(data.sender.id === {{ auth()->user()->id }}){
                listItemElement.innerHTML = `
                     <div class="message-data">
-                        <span class="message-data-time">10:10 AM, Today</span>
                         <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
+                        <span class="message-data-time">${data.sentDate}, Today</span>
                     </div>
                     <div class="message my-message">${data.sender.name}: ${data.message}</div>
                 `;
             }else{
              listItemElement.innerHTML = `
                 <div class="message-data text-right">
-                    <span class="message-data-time">10:10 AM, Today</span>
                     <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="avatar">
+                    <span class="message-data-time">${data.sentDate}, Today</span>
                 </div>
                 <div class="message other-message float-right">${data.sender.name}: ${data.message}</div>
                 `;
@@ -97,19 +122,19 @@
                         sender: userOne,
                         receiver: userTwo,
                         roomId:{{$roomId}}
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Clear the input field
-                    messageInput.value = '';
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                });
-            }
-        });
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Clear the input field
+        messageInput.value = '';
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
     });
+}
+});
+});
     </script>
 @endsection
 
