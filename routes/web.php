@@ -18,6 +18,6 @@ Auth::routes();
 
 Route::get('/', [\App\Http\Controllers\ChatController::class, 'index'])->name('home');
 
-Route::get('/create-room', [\App\Http\Controllers\ChatController::class, 'createRoom'])->name('chat.create-room');
+Route::get('/create-room', [\App\Http\Controllers\ChatController::class, 'findOrCreateRoom'])->name('chat.create-room');
 
 Route::post('/send-message', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send-message');
