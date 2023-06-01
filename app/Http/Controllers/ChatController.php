@@ -55,15 +55,17 @@ class ChatController extends Controller
         try {
             $userOne = (int)$request->get('userOne');
             $userTwo = (int)$request->get('userTwo');
-            $room = $this->chatRepository->findRoomByUserIds($userTwo, $userOne)->first();
+            $roomQuery = $this->chatRepository->findRoomByUserIds($userTwo, $userOne);
 
-            if (is_null($this->chatRepository->findRoomByUserIds($userTwo, $userOne))) {
+            if (!$roomQuery->exists()) {
                 $room = $this->chatRepository->createRoom($userOne, $userTwo);
+            } else {
+                $room = $roomQuery->first();
             }
         } catch (\Exception $e) {
             return view('home');
         }
 
-        return view('chat.room', ['roomId' => $room->id, 'messages' => $room->messages]);
+        return view('chat.room', ['roomId' => $room->id, 'messages' => $room?->messages]);
     }
 }
