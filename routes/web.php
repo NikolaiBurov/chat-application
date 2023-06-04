@@ -21,3 +21,10 @@ Route::get('/', [\App\Http\Controllers\ChatController::class, 'index'])->name('h
 Route::get('/create-room', [\App\Http\Controllers\ChatController::class, 'findOrCreateRoom'])->name('chat.create-room');
 
 Route::post('/send-message', [\App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send-message');
+
+
+Route::prefix('profile')->middleware('auth.user')->group(function () {
+    Route::get('/{id}', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/{id}/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/update/{id}', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+});

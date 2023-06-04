@@ -16,12 +16,12 @@
         <div class="jumbotron" style="min-height:400px;height:auto;">
             <ul class="list-group">
                 @foreach($users as $user)
-                <li class="list-group-item user-item text-left">
-                    <img class="img-circle img-user img-thumbnail " src="https://bootdey.com/img/Content/avatar/avatar7.png">
-                    <h3>
+                    <li class="list-group-item user-item text-left">
+                        {!! \App\Http\Helpers\BladeHelper::showUserPicture($user) !!}
+                        </h3>
                         <a href="{{route('chat.create-room',['userOne' => auth()->user()->id,'userTwo' => $user->id])}}">{{$user->name}}</a><br>
-                    </h3>
-                </li>
+                        </h3>
+                    </li>
                 @endforeach
             </ul>
         </div>

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Events\SaveMessageEvent;
 use App\Events\SendMessageEvent;
+use App\Http\Helpers\BladeHelper;
 use App\Models\User;
 use App\Repositories\ChatRepository;
 use Carbon\Carbon;
@@ -41,7 +42,16 @@ class ChatController extends Controller
             $message = $request->get('message');
             $roomId = $request->get('roomId');
 
-            event(new SendMessageEvent($loggerInUser, $receiver, $message, $roomId, Carbon::now()->format('h:i')));
+            event(
+                new SendMessageEvent(
+                    $loggerInUser,
+                    $receiver,
+                    $message,
+                    $roomId,
+                    Carbon::now()->format('h:i'),
+                    BladeHelper::showUserPicture($loggerInUser)
+                )
+            );
             event(new SaveMessageEvent($loggerInUser, $message, $roomId));
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -55,6 +65,7 @@ class ChatController extends Controller
         try {
             $userOne = (int)$request->get('userOne');
             $userTwo = (int)$request->get('userTwo');
+
             $roomQuery = $this->chatRepository->findRoomByUserIds($userTwo, $userOne);
 
             if (!$roomQuery->exists()) {
@@ -66,6 +77,9 @@ class ChatController extends Controller
             return view('home');
         }
 
-        return view('chat.room', ['roomId' => $room->id, 'messages' => $room?->messages]);
+        return view(
+            'chat.room',
+            ['roomId' => $room->id, 'messages' => $room?->messages, 'receiver' => User::find($userTwo)]
+        );
     }
 }

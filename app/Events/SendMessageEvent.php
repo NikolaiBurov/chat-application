@@ -24,7 +24,8 @@ class SendMessageEvent implements ShouldBroadcast
         public User $receiver,
         public string $message,
         public int $roomId,
-        public string $sentDate
+        public string $sentDate,
+        public string $userPicture
     ) {
     }
 

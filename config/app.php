@@ -182,6 +182,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'BladeHelper' => \App\Http\Helpers\BladeHelper::class
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
