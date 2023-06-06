@@ -64,7 +64,7 @@
         $(document).ready(function () {
             window.Echo = new Echo({
                 broadcaster: 'pusher',
-                key: '',
+                key: '{{ env('PUSHER_APP_KEY') }}',
                 cluster: 'eu',
                 forceTLS: true
             });
@@ -123,19 +123,20 @@
                             sender: userOne,
                             receiver: userTwo,
                             roomId: {{$roomId}}
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            // Clear the input field
-                            messageInput.value = '';
-                        })
-                        .catch(error => {
-                            console.error('Error sending message:', error);
-                        });
-                }
-            });
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Clear the input field
+            messageInput.value = '';
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
         });
+}
+});
+});
+
     </script>
 @endsection
 
